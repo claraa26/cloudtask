@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
 
-export default function TaskPage({ workspaceName, onLogout }) {
+export default function TaskPage({ workspaceName }) {
   // ===== TASK STATE =====
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
@@ -81,9 +81,6 @@ export default function TaskPage({ workspaceName, onLogout }) {
         <p>
           Workspace: <b>{workspaceName}</b>
         </p>
-        <button className="secondary" onClick={onLogout}>
-          Logout
-        </button>
       </div>
 
       <div className="form-group">
@@ -167,15 +164,19 @@ export default function TaskPage({ workspaceName, onLogout }) {
               </div>
             </div>
 
-            <div className="actions">
-              {!task.is_done && (
-                <button
-                  className="secondary"
-                  onClick={() => toggleDone(task)}
-                >
-                  Toggle
-                </button>
-              )}
+            <div
+              className="actions"
+              style={{ display: "flex", alignItems: "center", gap: 10 }}
+            >
+              <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <input
+                  type="checkbox"
+                  checked={task.is_done}
+                  onChange={() => toggleDone(task)}
+                />
+                Done
+              </label>
+
               <button
                 className="secondary"
                 onClick={() => deleteTask(task)}
