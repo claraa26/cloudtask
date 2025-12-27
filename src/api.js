@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080"; // ganti IP backend kalau perlu
-
+const API_URL = process.env.REACT_APP_API_URL; // ganti IP backend kalau perlu
+console.log("API_URL:", API_URL); // Debug
 export const api = axios.create({
   baseURL: API_URL,
 });
