@@ -5,7 +5,7 @@ export default function TaskPage({ workspaceName, onLogout }) {
   // ===== TASK STATE =====
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
-  const [note, setNote] = useState("");
+  const [notes, setNotes] = useState("");
   const [priority, setPriority] = useState("LOW");
   const [deadline, setDeadline] = useState("");
   const [err, setErr] = useState("");
@@ -32,13 +32,13 @@ export default function TaskPage({ workspaceName, onLogout }) {
     try {
       await API.post("/tasks", {
         title,
-        note,
+        notes,
         priority,
         deadline,
       });
 
       setTitle("");
-      setNote("");
+      setNotes("");
       setDeadline("");
       loadTasks();
     } catch (e) {
@@ -97,8 +97,8 @@ export default function TaskPage({ workspaceName, onLogout }) {
       <div className="form-group">
         <textarea
           placeholder="Add note (optional)..."
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
           rows="3"
           style={{
             width: "100%",
@@ -152,9 +152,9 @@ export default function TaskPage({ workspaceName, onLogout }) {
               >
                 {task.title}
               </strong>
-              {task.note && (
+              {task.notes && (
                 <div style={{ fontSize: 13, color: "#4b5563", marginTop: 4 }}>
-                  {task.note}
+                  {task.notes}
                 </div>
               )}
               <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
