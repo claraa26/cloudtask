@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# Deployment Guide – CloudTask Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Dokumen ini menjelaskan langkah-langkah deployment aplikasi CloudTask pada server berbasis Ubuntu Linux menggunakan Nginx sebagai web server dan reverse proxy.
 
-## Available Scripts
+## Persiapan Server
+1. Pastikan server menggunakan Ubuntu
+2. Update package <br>
+`sudo apt update && sudo apt upgrade -y`
+3. Install Node.js dan npm <br>
+`sudo apt install nodejs npm -y`
 
-In the project directory, you can run:
+## Clone Repository Frontend
+`git clone https://github.com/USERNAME/cloudtask-frontend.git` </br>
+`cd cloudtask-frontend`
 
-### `npm start`
+## Install Dependency Frontend
+`npm install`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Konfigurasi Environment Frontend
+Buat file .env: <br>
+`nano .env`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Isi dengan: <br>
+`REACT_APP_API_URL=`
 
-### `npm test`
+Frontend akan mengakses backend melalui Nginx reverse proxy, bukan langsung ke IP backend.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Build Aplikasi Frontend
+`npm run build` <br>
 
-### `npm run build`
+Hasil build akan berada di folder: <br>
+`cloudtask/build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Install dan Konfigurasi Nginx
+1. Install Nginx
+Buat file konfigurasi Nginx <br>
+`sudo nano /etc/nginx/sites-available/cloudtask`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Isi konfigurasi:
+```
+server {
+  listen 80;
+  server_name _;
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  root /home/ubuntu/cloudtask-frontend/build;
+  index index.html;
 
-### `npm run eject`
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  location /auth/ {
+    proxy_pass http://BACKEND_IP:8080/auth/;
+  }
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  location /tasks {
+    proxy_pass http://BACKEND_IP:8080/tasks;
+  }
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Aktifkan Konfigurasi Nginx
+`sudo ln -s /etc/nginx/sites-available/cloudtask /etc/nginx/sites-enabled/` <br>
+`sudo nginx -t`<br>
+`sudo systemctl reload nginx` <br>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Akses Aplikasi
+Buka browser dan akses:
 
-## Learn More
+`http://IP_SERVER`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Jika berhasil, halaman frontend CloudTask akan tampil.
