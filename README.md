@@ -10,7 +10,7 @@ Dokumen ini menjelaskan langkah-langkah deployment aplikasi CloudTask pada serve
 `sudo apt install nodejs npm -y`
 
 ## Clone Repository Frontend
-`git clone https://github.com/USERNAME/cloudtask-frontend.git` </br>
+`git clone https://github.com/claraa26/cloudtask.git` </br>
 `cd cloudtask-frontend`
 
 ## Install Dependency Frontend
